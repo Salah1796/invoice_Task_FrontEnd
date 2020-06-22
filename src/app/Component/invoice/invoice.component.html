@@ -1,0 +1,141 @@
+<div class="container ">
+    <!-- Invoice No & Date -->
+    <div class="row mt-5">
+        <div class="col-md-6 ">
+            <div class="input-group ">
+                <label for="InvoiceNo" class="col-md-4 col-form-label">Invoice No</label>
+                <input #num="ngModel" [(ngModel)]="Number" name="Number" type="number" class="form-control col-md-4  "
+                    placeholder="Invoice No">
+                <div *ngIf="num.touched && !Number" class=" alert alert-danger ml-2">
+
+                    Number is Required
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 ">
+            <div class="input-group ">
+                <label for="InvoiceDate" class="col-md-4 col-form-label">Invoice Date</label>
+                <input #date="ngModel" [(ngModel)]="Date" name="Date" type="date" class="form-control col-md-4  "
+                    placeholder="Invoice Date">
+                <div *ngIf="date.touched && !Date" class=" alert alert-danger ml-2">
+                    Date is Required</div>
+            </div>
+        </div>
+    </div>
+    <!-- Store -->
+    <div class="row mb-5 mt-2">
+        <div class="col-md-6">
+            <div class="input-group ">
+                <label for="InvoiceNo" class="col-md-4 col-form-label">Store</label>
+                <select #store="ngModel" class="custom-select col-md-4  " name="Stores" [(ngModel)]="StoreID">
+                    <option value="0" disabled>Select Store</option>
+                    <option *ngFor="let Store of Stores" [ngValue]="Store.ID">{{Store.Name}}</option>
+                </select>
+                <div *ngIf="store.touched && StoreID==0" class="alert alert-danger  ml-2">
+                    Store Is Required
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="row mt-2">
+        <div class="col-md-11">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th><strong>Item</strong></th>
+                        <th class="text-xs-center"><strong>Unit</strong></th>
+                        <th class="text-xs-center"><strong>Price</strong></th>
+                        <th class="text-xs-center"><strong>Qty</strong></th>
+                        <th class="text-xs-center"><strong>Total</strong></th>
+                        <th class="text-xs-center"><strong>Discount</strong></th>
+                        <th class="text-xs-center"><strong>Net</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="thead-light">
+                        <th>
+                            <select class="custom-select  " name="Items" [(ngModel)]="ItemID" (change)="GetUnits()">
+                                <option selected value="0" disabled>Select Item</option>
+                                <option *ngFor="let item of Items" [ngValue]="item.ID">{{item.Name}}</option>
+                            </select>
+                        </th>
+                        <th>
+                            <select class="custom-select  " name="Units" [(ngModel)]="ItemUnitID" (change)="GetPrice()">
+                                <option selected value="0" disabled>Select Unit</option>
+                                <option *ngFor="let unit of ItemUnits" [ngValue]="unit.ID">{{unit.Unit}}</option>
+                            </select>
+                        </th>
+                        <th class="text-center">
+                            <strong>{{ItemUnitPrice}}</strong>
+                        </th>
+                        <th class="text-center col-sm-2">
+                            <input name="Quantity" [(ngModel)]="Quantity" class="form-control  " type="number" min="1"
+                                (change)="CalcTotal()" (keyup)="CalcTotal()">
+                        </th>
+                        <th class="text-center">
+                            <strong>{{Total}}</strong>
+                        </th>
+                        <th class="text-center col-sm-2">
+                            <input name="Discount" [(ngModel)]="Discount" (keyup)="CalcNet()" (change)="CalcNet()"
+                                class="form-control  " type="number" min="0" max="{{Total}}">
+                        </th>
+                        <th class="text-center">
+                            <strong>{{Net}}</strong>
+                        </th>
+                    </tr>
+                    <tr *ngFor="let inv of InvoiceItems">
+                        <td><strong>{{inv.Item}}</strong></td>
+                        <td class="text-xs-center"><strong>{{inv.Unit}}</strong></td>
+                        <td class="text-xs-center"><strong>{{inv.Price}}</strong></td>
+                        <td class="text-xs-center"><strong>{{inv.Quantity}}</strong></td>
+                        <td class="text-xs-center"><strong>{{inv.TotalPrice}}</strong></td>
+                        <td class="text-xs-center"><strong>{{inv.Discount}}</strong></td>
+                        <td class="text-xs-center"><strong>{{inv.NetPrice}}</strong></td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-1 d-flex align-items-start">
+            <button [disabled]="ItemID==0 || ItemUnitID==0" class="btn btn-success" (click)="Add()">
+                <i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <!--Total & Taxes & Net-->
+    <div class="d-flex  justify-content-end  " style="margin-top: 30px;">
+        <div>
+            <div class="col-md-10 mb-2">
+                <div class="input-group ">
+                    <label for="InvoiceNo" class="col-md-5 col-form-label">Total</label>
+                    <input readonly name="InvoiceNo" [(ngModel)]="InvoicTotalPrice" name="InvoicTotalPrice" type="text"
+                        class="form-control col-md-5  " placeholder="Invoice No">
+                </div>
+            </div>
+            <div class="col-md-10  mb-2 ">
+                <div class="input-group ">
+                    <label for="InvoiceNo" class="col-md-5 col-form-label">Taxes</label>
+                    <input [(ngModel)]="Taxes" name="Taxes" type="text" class="form-control col-md-5  "
+                        placeholder="Taxes" (keyup)="CalcInvNet()">
+                </div>
+            </div>
+            <div class="col-md-10  mb-2">
+                <div class="input-group ">
+                    <label for="InvoiceNo" class="col-md-5 col-form-label">Net</label>
+                    <input readonly [(ngModel)]="InvoicNetPrice" name="InvoicNetPrice" type="text"
+                        class="form-control col-md-5  " placeholder="Net">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Save & Delete-->
+    <div class="text-center">
+        <button [disabled]="!Number || !Date || StoreID==0 || InvoiceItems.length==0" type="button"
+            class="btn btn-outline-success mr-2 " (click)="Save()">Save</button>
+        <button class="btn btn-outline-danger  " mwlConfirmationPopover [popoverTitle]="popoverTitle"
+            [popoverMessage]="popoverMessage" placement="top" (confirm)="Delete()"
+            (cancel)="cancelClicked = true">Delete</button>
+    </div>
+</div>

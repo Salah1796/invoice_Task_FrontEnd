@@ -1,0 +1,63 @@
+<div class="container  text-center">
+    <div class="row d-flex justify-content-center  mt-5 ">
+        <div class="col-md-10">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of Items">
+                        <th scope="row">{{item.ID}}</th>
+                        <td>{{item.Name}}</td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-1 d-flex align-items-start">
+            <button class="btn btn-success" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">
+                <i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel text-center ">New Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="name" class="col-form-label">Name</label>
+                        <input required #name="ngModel" [(ngModel)]="Name" type="text" name="Name" class="form-control"
+                            id="name">
+                        <div *ngIf="name.touched && !name.valid" class=" alert alert-danger mt-2">
+                            <div *ngIf="name.errors?.required">
+                                Name is Required
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button [disabled]="!name.valid" type="button" class="btn btn-success" data-dismiss="modal"
+                    (click)="Add()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
